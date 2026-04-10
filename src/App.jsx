@@ -16,7 +16,7 @@ function App() {
       return;
     }
 
-    fetch(`https://your-api-id.serverless.yandexcloud.net/api/tasks?user_id=${user_id}`)
+    fetch(`https://functions.yandexcloud.net/d4evd5vtkc77qo0ksode?user_id=${user_id}`)
       .then(res => res.json())
       .then(data => {
         setTasks(data.tasks);
