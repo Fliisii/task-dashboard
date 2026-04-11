@@ -6,7 +6,12 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
-    "chart.js": "^4.4.0"
+    "chart.js": "^4.4.0",
+    "@mui/material": "^5.15.0",
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.15.0",
+    "date-fns": "^3.0.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.0.0",
