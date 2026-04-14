@@ -246,7 +246,7 @@ function App() {
         {/* Footer */}
         <Box sx={{ textAlign: 'center', mt: 4, py: 3, color: 'text.secondary' }}>
           <Typography variant="body2">
-            🔗 <strong>Telegram-бот</strong> — добавляй задачи в любом месте
+            🔗 <strong>@Miroslav_Scheduler_bot</strong> — добавляй задачи в любом месте
           </Typography>
           <Typography variant="caption">
             Данные хранятся в Yandex YDB • Работает на Cloud Functions
