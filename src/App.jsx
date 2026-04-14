@@ -18,7 +18,8 @@ import {
   LinearProgress,
   CircularProgress,
   Alert,
-  Fade
+  Fade,
+  Zoom
 } from '@mui/material';
 import {
   TaskAlt as TaskIcon,
@@ -33,17 +34,19 @@ import { ru } from 'date-fns/locale';
 
 function StatCard({ title, value, icon, color }) {
   return (
-    <Card sx={{ height: '100%', bgcolor: '#f8f9fc', border: '1px solid #e0e0e0' }}>
-      <CardContent>
-        <Box display="flex" alignItems="center" justifyContent="space-between">
-          <Box>
-            <Typography variant="caption" color="text.secondary">{title}</Typography>
-            <Typography variant="h4" fontWeight="bold">{value}</Typography>
+    <Zoom in={true} style={{ transitionDelay: '100ms' }}>
+      <Card sx={{ height: '100%', background: `linear-gradient(135deg, ${color} 0%, ${color}dd 100%)`, color: 'white' }}>
+        <CardContent>
+          <Box display="flex" alignItems="center" justifyContent="space-between">
+            <Box>
+              <Typography variant="caption" sx={{ opacity: 0.8 }}>{title}</Typography>
+              <Typography variant="h4" fontWeight="bold">{value}</Typography>
+            </Box>
+            {icon}
           </Box>
-          {icon}
-        </Box>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </Zoom>
   );
 }
 
