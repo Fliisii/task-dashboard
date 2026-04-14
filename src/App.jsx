@@ -33,11 +33,11 @@ import { ru } from 'date-fns/locale';
 
 function StatCard({ title, value, icon, color }) {
   return (
-    <Card sx={{ height: '100%', background: `linear-gradient(135deg, ${color} 0%, ${color}dd 100%)`, color: 'white' }}>
+    <Card sx={{ height: '100%', bgcolor: '#f8f9fc', border: '1px solid #e0e0e0' }}>
       <CardContent>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Box>
-            <Typography variant="caption" sx={{ opacity: 0.8 }}>{title}</Typography>
+            <Typography variant="caption" color="text.secondary">{title}</Typography>
             <Typography variant="h4" fontWeight="bold">{value}</Typography>
           </Box>
           {icon}
@@ -80,8 +80,8 @@ function TaskItem({ task, onDone, onDelete }) {
             </Box>
           }
         />
-        {!task.is_completed && (
-          <Box display="flex" gap={1}>
+        <Box display="flex" gap={1}>
+          {!task.is_completed && (
             <button
               onClick={() => onDone(task.id)}
               style={{
@@ -96,22 +96,22 @@ function TaskItem({ task, onDone, onDelete }) {
             >
               ✓ Готово
             </button>
-            <button
-              onClick={() => onDelete(task.id)}
-              style={{
-                padding: '6px 12px',
-                bgcolor: '#e74a3b',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontSize: '12px'
-              }}
-            >
-              🗑 Удалить
-            </button>
-          </Box>
-        )}
+          )}
+          <button
+            onClick={() => onDelete(task.id)}
+            style={{
+              padding: '6px 12px',
+              bgcolor: '#e74a3b',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '12px'
+            }}
+          >
+            🗑 Удалить
+          </button>
+        </Box>
       </ListItem>
     </Fade>
   );
@@ -154,10 +154,16 @@ function App() {
       alert('Заполните название и время');
       return;
     }
+    const formattedTime = newTaskTime.replace('T', ' ');
     await fetch('https://functions.yandexcloud.net/d4evd5vtkc77qo0ksode', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user_id, action: 'add', title: newTaskTitle, remind_at: newTaskTime })
+      body: JSON.stringify({ 
+        user_id, 
+        action: 'add', 
+        title: newTaskTitle, 
+        remind_at: formattedTime 
+      })
     });
     setNewTaskTitle('');
     setNewTaskTime('');
