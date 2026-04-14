@@ -18,8 +18,7 @@ import {
   LinearProgress,
   CircularProgress,
   Alert,
-  Fade,
-  Zoom
+  Fade
 } from '@mui/material';
 import {
   TaskAlt as TaskIcon,
@@ -31,27 +30,24 @@ import {
 } from '@mui/icons-material';
 import { format, isToday, isTomorrow } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import './App.css';
 
 function StatCard({ title, value, icon, color }) {
   return (
-    <Zoom in={true} style={{ transitionDelay: '100ms' }}>
-      <Card sx={{ height: '100%', background: `linear-gradient(135deg, ${color} 0%, ${color}dd 100%)`, color: 'white' }}>
-        <CardContent>
-          <Box display="flex" alignItems="center" justifyContent="space-between">
-            <Box>
-              <Typography variant="caption" sx={{ opacity: 0.8 }}>{title}</Typography>
-              <Typography variant="h4" fontWeight="bold">{value}</Typography>
-            </Box>
-            {icon}
+    <Card sx={{ height: '100%', background: `linear-gradient(135deg, ${color} 0%, ${color}dd 100%)`, color: 'white' }}>
+      <CardContent>
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          <Box>
+            <Typography variant="caption" sx={{ opacity: 0.8 }}>{title}</Typography>
+            <Typography variant="h4" fontWeight="bold">{value}</Typography>
           </Box>
-        </CardContent>
-      </Card>
-    </Zoom>
+          {icon}
+        </Box>
+      </CardContent>
+    </Card>
   );
 }
 
-function TaskItem({ task }) {
+function TaskItem({ task, onDone, onDelete }) {
   const getDateLabel = () => {
     const date = new Date(task.remind_at);
     if (isToday(date)) return 'Сегодня';
@@ -84,6 +80,38 @@ function TaskItem({ task }) {
             </Box>
           }
         />
+        {!task.is_completed && (
+          <Box display="flex" gap={1}>
+            <button
+              onClick={() => onDone(task.id)}
+              style={{
+                padding: '6px 12px',
+                bgcolor: '#1cc88a',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '12px'
+              }}
+            >
+              ✓ Готово
+            </button>
+            <button
+              onClick={() => onDelete(task.id)}
+              style={{
+                padding: '6px 12px',
+                bgcolor: '#e74a3b',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '12px'
+              }}
+            >
+              🗑 Удалить
+            </button>
+          </Box>
+        )}
       </ListItem>
     </Fade>
   );
@@ -94,10 +122,12 @@ function App() {
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [newTaskTime, setNewTaskTime] = useState('');
+
+  const user_id = new URLSearchParams(window.location.search).get('user_id');
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const user_id = urlParams.get('user_id');
     if (!user_id) {
       setError('Не указан user_id. Добавьте ?user_id=ваш_id в URL');
       setLoading(false);
@@ -116,7 +146,41 @@ function App() {
         setError('Ошибка загрузки данных. Попробуйте позже.');
         setLoading(false);
       });
-  }, []);
+  }, [user_id]);
+
+  const handleAddTask = async (e) => {
+    e.preventDefault();
+    if (!newTaskTitle || !newTaskTime) {
+      alert('Заполните название и время');
+      return;
+    }
+    await fetch('https://functions.yandexcloud.net/d4evd5vtkc77qo0ksode', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id, action: 'add', title: newTaskTitle, remind_at: newTaskTime })
+    });
+    setNewTaskTitle('');
+    setNewTaskTime('');
+    window.location.reload();
+  };
+
+  const handleDone = async (task_id) => {
+    await fetch('https://functions.yandexcloud.net/d4evd5vtkc77qo0ksode', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id, action: 'done', task_id })
+    });
+    window.location.reload();
+  };
+
+  const handleDelete = async (task_id) => {
+    await fetch('https://functions.yandexcloud.net/d4evd5vtkc77qo0ksode', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id, action: 'delete', task_id })
+    });
+    window.location.reload();
+  };
 
   const barData = {
     labels: ['Всего', 'Выполнено', 'В работе', 'На сегодня'],
@@ -143,6 +207,8 @@ function App() {
     plugins: { legend: { position: 'bottom' } }
   };
 
+  const completionPercent = stats.total > 0 ? (stats.completed / stats.total * 100).toFixed(0) : 0;
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
@@ -161,8 +227,6 @@ function App() {
     );
   }
 
-  const completionPercent = stats.total > 0 ? (stats.completed / stats.total * 100).toFixed(0) : 0;
-
   return (
     <>
       <AppBar position="sticky" sx={{ bgcolor: '#4e73df' }}>
@@ -178,6 +242,61 @@ function App() {
       </AppBar>
 
       <Container maxWidth="xl" sx={{ py: 4 }}>
+        {/* Форма добавления */}
+        <Box component="form" onSubmit={handleAddTask} sx={{ mb: 4, p: 3, bgcolor: '#f8f9fc', borderRadius: 3 }}>
+          <Typography variant="h6" gutterBottom>Добавить задачу</Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={8}>
+              <input
+                type="text"
+                placeholder="Что нужно сделать?"
+                value={newTaskTitle}
+                onChange={(e) => setNewTaskTitle(e.target.value)}
+                required
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid #ccc',
+                  borderRadius: '8px',
+                  fontSize: '16px'
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <input
+                type="datetime-local"
+                value={newTaskTime}
+                onChange={(e) => setNewTaskTime(e.target.value)}
+                required
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid #ccc',
+                  borderRadius: '8px',
+                  fontSize: '16px'
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} md={1}>
+              <button
+                type="submit"
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  bgcolor: '#4e73df',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold'
+                }}
+              >
+                + Добавить
+              </button>
+            </Grid>
+          </Grid>
+        </Box>
+
         {/* Статистика */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
           <Grid item xs={12} sm={6} md={3}>
@@ -237,19 +356,15 @@ function App() {
           ) : (
             <List sx={{ p: 2 }}>
               {tasks.map(task => (
-                <TaskItem key={task.id} task={task} />
+                <TaskItem key={task.id} task={task} onDone={handleDone} onDelete={handleDelete} />
               ))}
             </List>
           )}
         </Paper>
 
-        {/* Footer */}
         <Box sx={{ textAlign: 'center', mt: 4, py: 3, color: 'text.secondary' }}>
           <Typography variant="body2">
-            🔗 <strong>@Miroslav_Scheduler_bot</strong> — добавляй задачи в любом месте
-          </Typography>
-          <Typography variant="caption">
-            Данные хранятся в Yandex YDB • Работает на Cloud Functions
+            🔗 <strong>@Miroslav_Scheduler_bot</strong> — работает в паре с сайтом
           </Typography>
         </Box>
       </Container>
