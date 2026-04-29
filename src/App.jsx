@@ -394,13 +394,13 @@ function App() {
                 }}
               />
             </Grid>
-            <Grid item xs={12} md={1}>
+            <Grid item xs={12} md={1.5}>
             <Button
               type="submit"
               variant="contained"
               color="primary"
               fullWidth
-              sx={{ py: 1.5, fontWeight: 'bold' }}
+              sx={{ py: 1.5, fontWeight: 'bold', whiteSpace: 'nowrap' }}
             >
               + Добавить
             </Button>
