@@ -1,6 +1,5 @@
 # 🤖 Miroslav Scheduler Bot
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/your-badge-id/deploy-status)](https://app.netlify.com/sites/your-site/deploys)
 [![Telegram Bot](https://img.shields.io/badge/Telegram-%40Miroslav__Scheduler__bot-blue?logo=telegram)](https://t.me/Miroslav_Scheduler_bot)
 
 **Серверлесс-бот‑планировщик задач в Telegram с дашбордом на React.**  
