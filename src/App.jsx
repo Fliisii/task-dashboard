@@ -1,3 +1,4 @@
+import { Button } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Bar, Pie } from 'react-chartjs-2';
 import 'chart.js/auto';
