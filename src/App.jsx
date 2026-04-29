@@ -390,21 +390,15 @@ function App() {
               />
             </Grid>
             <Grid item xs={12} md={1}>
-              <button
-                type="submit"
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  backgroundColor: '#4e73df',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontWeight: 'bold'
-                }}
-              >
-                + Добавить
-              </button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ py: 1.5, fontWeight: 'bold' }}
+            >
+              + Добавить
+            </Button>
             </Grid>
           </Grid>
         </Box>
