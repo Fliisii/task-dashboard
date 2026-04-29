@@ -46,3 +46,4 @@ graph TD
 | Деплой | Netlify (фронт) · Yandex Cloud (бэкенд + БД) |
 | Уведомления | Cloud Trigger (cron: `* * * * *`) |
 
+![Описание картинки](assets/demo)
