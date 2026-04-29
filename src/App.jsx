@@ -24,7 +24,8 @@ import {
   Fade,
   IconButton,
   Switch,
-  useMediaQuery
+  useMediaQuery,
+  CssBaseline 
 } from '@mui/material';
 import {
   TaskAlt as TaskIcon,
@@ -310,6 +311,7 @@ function App() {
   if (loading) {
     return (
       <ThemeProvider theme={theme}>
+        <CssBaseline /> 
         <Container maxWidth="xl" sx={{ py: 4 }}>
           <LoadingSkeleton />
         </Container>
@@ -321,6 +323,7 @@ function App() {
   if (error) {
     return (
       <ThemeProvider theme={theme}>
+        <CssBaseline /> 
         <Container maxWidth="md" sx={{ mt: 4 }}>
           <Alert severity="error" sx={{ borderRadius: 2 }}>{error}</Alert>
         </Container>
@@ -331,6 +334,7 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
       <Toaster position="top-right" toastOptions={{ duration: 2000 }} />
       
       <AppBar position="sticky" color="primary" elevation={3}>
