@@ -21,19 +21,14 @@
 
 ## 🏗 Архитектура
 
-Telegram User
-│
-▼
-┌─────────────────────────┐
-│ Yandex Cloud Functions │ ← ежеминутный триггер
-│ (Python 3) │
-└────────┬──────┬─────────┘
-│ │
-┌────▼──┐ ▼
-│ YDB │ React-дашборд
-│ (БД) │ (Netlify)
-└───────┘
-
+```mermaid
+graph TD
+    A[Telegram User] -->|webhook| B[Cloud Function Python]
+    C[Cron Trigger] -->|каждую минуту| B
+    B -->|чтение/запись| D[(YDB)]
+    B -->|API| E[React Dashboard]
+    E -->|деплой| F[Netlify]
+```
 
 - **Cloud Function** обрабатывает команды из Telegram (webhook) и вызывается триггером для проверки уведомлений, токен бота лежит в Yandex lockbox
 - **YDB** — единое хранилище: задачи, диалоги, настройки пользователей
